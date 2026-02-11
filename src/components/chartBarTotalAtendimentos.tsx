@@ -42,7 +42,7 @@ export function ChartBarAtendimentosTotal() {
   async function listEntriesGroupbyDay() {
     const response = await api.get(`entries/entriesamountdays?atendimento=${atendimento}`)
     if (response.data) {
-      const parsedData:TEntryAmountDay[] = response.data.map(item => ({
+      const parsedData: TEntryAmountDay[] = response.data.map((item: TEntryAmountDay) => ({
         ...item,
         data: new Date(item.data).toISOString().slice(0, 10),
         total: Number(item.total)
@@ -89,7 +89,6 @@ export function ChartBarAtendimentosTotal() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <Button variant="outline">Filtrar</Button>
             </div>
           </div>
         </CardHeader>

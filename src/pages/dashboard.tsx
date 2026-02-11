@@ -15,7 +15,7 @@ export default function Dashboard() {
   async function listEntriesAtendimentosPorLocal() {
     const response = await api.get('entries/entriesbylocal')
     if (response.data) {
-      const parsedData = response.data.map(item => ({
+      const parsedData: TEntryAtendimentoPorLocal[] = response.data.map((item: TEntryAtendimentoPorLocal) => ({
         ...item,
         atendimento: item.atendimento,
         qtde: item.qtde,
