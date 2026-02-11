@@ -54,7 +54,7 @@ export default function FrmDepartamento({setIsModalOpen, listDepartments}: Props
         </div>
         <Button
           onClick={handleSubmit} 
-          className="mt-4 self-center w-1/2 hover:cursor-pointer bg-blue-400 hover:bg-blue-500"
+          className="mt-4 self-center w-1/2 hover:cursor-pointer bg-green-950 hover:bg-green-800"
         >
           Salvar
         </Button>

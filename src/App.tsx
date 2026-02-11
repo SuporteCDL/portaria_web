@@ -1,18 +1,28 @@
 import { Routes, Route } from "react-router-dom"
-import Entradas from './components/entradas'
 import Modal from 'react-modal';
-import Dashboard from "./dashboard";
-import Header from "./components/header";
+import Entradas from './pages/entradas'
+import Dashboard from "./pages/dashboard"; 
+import ForgotPassword from "./auth/forgotpassword";
+import SignIn from "./auth/signin";
+import { PrivateRoute } from "./routes/PrivateRoute";
+import { ProtectedLayout } from "./routes/ProtectedLayout";
+import RelAtendimentos from "./pages/relatendimentos";
+import Users from "./pages/users";
 
 Modal.setAppElement('#root');
 
 function App() {
   return (
     <>
-      <Header />
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/entradas" element={<Entradas />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route element={<PrivateRoute><ProtectedLayout /></PrivateRoute>}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/entradas" element={<Entradas />} />
+          <Route path="/relatendimentos" element={<RelAtendimentos />} />
+        </Route>
       </Routes>
     </>
   )

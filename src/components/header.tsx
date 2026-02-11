@@ -1,8 +1,7 @@
 import logocdl from '@/assets/cdl.png'
-import logout from '@/assets/logout.svg'
-import user from '@/assets/user.svg'
 import menu from '@/assets/menu.svg'
 import { Button } from "@/components/ui/button"
+import { useAuth } from '@/contexts/AuthContext'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +19,7 @@ import {
 import { Link } from 'react-router-dom'
 
 export default function Header() {
+  const { logout } = useAuth()
 
   return (
     <>
@@ -30,7 +30,7 @@ export default function Header() {
         </div>
         <div className='flex flex-row gap-4 pr-4'>
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               <Button variant="ghost">
                 <img src={menu} alt='Menu' width={20} />
               </Button>
@@ -43,12 +43,15 @@ export default function Header() {
                 <DropdownMenuItem>
                   <Link to='/entradas'>Lançar entradas</Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to='/users'>Usuários</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>Relatórios</DropdownMenuSubTrigger>
                   <DropdownMenuPortal>
                     <DropdownMenuSubContent>
                       <DropdownMenuItem>
-                        Quantidade de Atendimentos
+                        <Link to="/relatendimentos">Atendimentos por período</Link>
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuPortal>
@@ -57,8 +60,7 @@ export default function Header() {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  Sair
-                  <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                  <Button variant="ghost" onClick={logout}>Sair</Button>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>

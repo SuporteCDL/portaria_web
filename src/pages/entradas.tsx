@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react'
 import { api } from '@/lib/axios'
 import ReactModal from 'react-modal'
-import { FiLogOut } from 'react-icons/fi'
-import { FiSearch } from "react-icons/fi";
-import { Textarea } from "./ui/textarea"
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { AxiosRequestConfig } from 'axios'
+import { TempoPermanencia } from '@/components/tempoPermanencia';
+import svgSearch from '@/assets/search.svg'
+import svgLogOut from '@/assets/logout.svg'
+import FrmDepartamento from '@/components/frmDepartamentos';
 import {
   Select,
   SelectContent,
@@ -23,15 +28,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
 import { calcularPermanencia, formatarTempo, formatDate, formatDateBR, formatDateDB } from '@/lib/functions'
-import Header from './header'
-import { AxiosRequestConfig } from 'axios'
-import { TempoPermanencia } from './tempoPermanencia';
-import svgSearch from '@/assets/search.svg'
-import svgLogOut from '@/assets/logout.svg'
-import FrmDepartamento from './frmDepartamentos';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface IDepartment {
   id: number
@@ -53,6 +51,7 @@ interface IEntry {
 
 export default function Entradas() {
   let totalRegistros = 0
+  const { user } = useAuth()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [departments, setDepartments] = useState<IDepartment[]>([])
   const [diaHoje, setDiaHoje] = useState(new Date().toLocaleDateString())
@@ -126,7 +125,8 @@ export default function Entradas() {
       permanencia: 0,
       observacao: observacao,
       nome: nome,
-      servico: servico
+      servico: servico,
+      usuario: user?.name
     }
     const config: AxiosRequestConfig = {
       headers: {
@@ -182,9 +182,8 @@ export default function Entradas() {
 
   return (
     <div className="flex flex-col justify-start items-start w-full h-screen bg-slate-50">
-      
-
       <div className="w-full flex flex-row flex-1 gap-10">
+
         <div className="w-103 p-4 border-r border-slate-100 shadow-2xl">
           <h3 className='text-lg font-bold mb-4'>Incluir entrada:</h3>
           <form className="flex flex-col gap-4 w-full">
@@ -343,6 +342,7 @@ export default function Entradas() {
             </TableFooter>
           </Table>
         </div>
+        
       </div>
 
       <ReactModal 
