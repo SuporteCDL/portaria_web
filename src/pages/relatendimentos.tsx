@@ -10,7 +10,7 @@ import { ChevronDownIcon } from "lucide-react"
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
-import { formatDateDB } from "@/lib/functions";
+import { formatarTempo, formatDateDB } from "@/lib/functions";
 import * as XLSX from "xlsx"
 import { saveAs } from "file-saver"
 import jsPDF from "jspdf"
@@ -36,6 +36,7 @@ interface EntryProps {
   observacao: string
   nome: string
   servico: string
+  usuario: string
 }
 
 export default function RelAtendimentos() {
@@ -170,6 +171,7 @@ export default function RelAtendimentos() {
         <TableCaption>Lista de entradas por período</TableCaption>
         <TableHeader>
           <TableRow className="bg-slate-200">
+            <TableHead className="w-32">Usuário</TableHead>
             <TableHead className="w-96">Local</TableHead>
             <TableHead className="w-32 text-center">Data</TableHead>
             <TableHead className="w-32 text-center">Hora Entrada</TableHead>
@@ -181,13 +183,14 @@ export default function RelAtendimentos() {
         <TableBody>
           {entries.map((item) => (
             <TableRow key={item.id}>
+              <TableCell className="font-medium">{item.usuario}</TableCell>
               <TableCell className="font-medium">{item.atendimento}</TableCell>
               <TableCell className="text-center">{new Date(item.data)
                 .toLocaleDateString('pt-BR')}
               </TableCell>
               <TableCell className=" text-center">{item.hora_entrada}</TableCell>
               <TableCell className=" text-center">{item.hora_saida}</TableCell>
-              <TableCell className=" text-center">{item.permanencia}</TableCell>
+              <TableCell className=" text-center">{formatarTempo(item.permanencia)}</TableCell>
               <TableCell>{item.observacao}</TableCell>
             </TableRow>
           ))}

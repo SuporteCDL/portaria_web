@@ -1,10 +1,9 @@
-import * as React from "react"
+import { useEffect, useState } from "react"
 import { Label, Pie, PieChart } from "recharts"
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -14,57 +13,34 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
+import { api } from "@/lib/axios"
 
-// const chartData = [
-//   { atendimento: "chrome", qtde: 275, fill: "var(--color-chrome)" },
-//   { atendimento: "safari", qtde: 200, fill: "var(--color-safari)" },
-//   { atendimento: "firefox", qtde: 287, fill: "var(--color-firefox)" },
-//   { atendimento: "edge", qtde: 173, fill: "var(--color-edge)" },
-//   { atendimento: "other", qtde: 190, fill: "var(--color-other)" },
-// ]
-
-// const chartConfig = {
-//   visitors: {
-//     label: "Visitors",
-//   },
-//   chrome: {
-//     label: "Chrome",
-//     color: "var(--chart-1)",
-//   },
-//   safari: {
-//     label: "Safari",
-//     color: "var(--chart-2)",
-//   },
-//   firefox: {
-//     label: "Firefox",
-//     color: "var(--chart-3)",
-//   },
-//   edge: {
-//     label: "Edge",
-//     color: "var(--chart-4)",
-//   },
-//   other: {
-//     label: "Other",
-//     color: "var(--chart-5)",
-//   },
-// } satisfies ChartConfig
-
-type TEntriesByLocal = {
-  atendimento: string
-  qtde: number
-  fill: string
+type TEntryAtendimentoPorLocal = {
+  atendimento: string;
+  qtde: number;
+  fill: string;
 }
 
-interface Props {
-  atendimentos: TEntriesByLocal[]
-}
-
-export function ChartPieDonutAtendimentosLocal({ atendimentos }: Props) {
-  const totalVisitors = React.useMemo(() => {
-    return atendimentos.reduce((acc, curr) => acc + curr.qtde, 0)
-  }, [atendimentos])
+export function ChartPieDonutAtendimentosLocal() {
+  const [entriesAtendimentoPorLocal, setEntriesAtendimentoPorLocal] = useState<TEntryAtendimentoPorLocal[]>([])
+  const [totalVisitors, setTotalVisitors] = useState(0)
   
-  const chartConfig = atendimentos.reduce((acc, item, index) => {
+  async function listEntriesAtendimentosPorLocal() {
+    const response = await api.get('entries/entriesbylocal')
+    if (response.data) {
+      const parsedData: TEntryAtendimentoPorLocal[] = response.data.map((item: TEntryAtendimentoPorLocal) => ({
+        ...item,
+        atendimento: item.atendimento,
+        qtde: item.qtde,
+        fill: `var(--color-${item.atendimento.split(' ')[1] ? item.atendimento.split(' ')[1] : item.atendimento.split(' ')[0]})`
+      }))
+      const total = parsedData.reduce((acc, curr) => acc + curr.qtde, 0)
+      setTotalVisitors(total)
+      setEntriesAtendimentoPorLocal(parsedData)
+    }
+  }
+  
+  const chartConfig = entriesAtendimentoPorLocal.reduce((acc, item, index) => {
     const colorIndex = (index % 5) + 1
     acc[item.atendimento] = {
       label: item.atendimento,
@@ -73,7 +49,10 @@ export function ChartPieDonutAtendimentosLocal({ atendimentos }: Props) {
     return acc
   }, {} as ChartConfig)
 
-  
+  useEffect(() => {
+    listEntriesAtendimentosPorLocal()
+  },[])
+
   return (
     <Card className="flex flex-col w-1/3">
       <CardHeader className="items-center pb-0">
@@ -91,7 +70,7 @@ export function ChartPieDonutAtendimentosLocal({ atendimentos }: Props) {
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={atendimentos}
+              data={entriesAtendimentoPorLocal}
               dataKey="qtde"
               nameKey="atendimento"
               innerRadius={60}

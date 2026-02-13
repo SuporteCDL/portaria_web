@@ -16,7 +16,7 @@ export default function SignIn() {
     event?.preventDefault()
     await login(email, password)
     navigate("/", { replace: true })
-    console.log(isAuthenticated)
+    // console.log(isAuthenticated)
   }
 
   return (

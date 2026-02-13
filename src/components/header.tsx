@@ -19,11 +19,11 @@ import {
 import { Link } from 'react-router-dom'
 
 export default function Header() {
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
 
   return (
     <>
-      <div className="w-full h-20 bg-slate-200 flex flex-row items-center pl-4">
+      <div className="w-full h-16 bg-slate-200 flex flex-row items-center pl-4">
         <div className='flex flex-1 items-center'>
           <img src={logocdl} alt='CDL Anápolis' width={100} />
           <h1 className='pl-8 text-cyan-800 font-bold text-xl'>CONTROLE DE ENTRADAS E SAÍDAS</h1>
@@ -32,7 +32,7 @@ export default function Header() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost">
-                <img src={menu} alt='Menu' width={20} />
+                <img src={menu} className='w-8' alt='Menu' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-40" align="start">
@@ -43,9 +43,11 @@ export default function Header() {
                 <DropdownMenuItem>
                   <Link to='/entradas'>Lançar entradas</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to='/users'>Usuários</Link>
-                </DropdownMenuItem>
+                {user?.role === 'admin' &&
+                  <DropdownMenuItem>
+                    <Link to='/users'>Usuários</Link>
+                  </DropdownMenuItem>
+                }
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>Relatórios</DropdownMenuSubTrigger>
                   <DropdownMenuPortal>

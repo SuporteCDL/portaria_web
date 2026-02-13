@@ -296,8 +296,8 @@ export default function Entradas() {
                 <TableHead className="w-28">Hora Entrada</TableHead>
                 <TableHead className="w-28">Hora Saída</TableHead>
                 <TableHead className="w-28">Tempo</TableHead>
-                <TableHead className="w-12 text-right">Qtd. Pessoas</TableHead>
-                <TableHead></TableHead>
+                <TableHead className="w-16 text-center">Qtd.<br /> Pessoas</TableHead>
+                <TableHead className='w-20 text-center'>Marcar<br />Saída</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -319,7 +319,7 @@ export default function Entradas() {
                       }
                     </TableCell>
                     <TableCell className="w-12 text-center">{item.qtde_pessoas}</TableCell>
-                    <TableCell className="w-12 text-right">
+                    <TableCell className="w-12 text-center">
                       <Button
                         className='bg-orange-200 hover:bg-orange-300 hover:cursor-pointer'
                         type='button'
@@ -336,8 +336,8 @@ export default function Entradas() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={4} className="text-right">Total de entradas em {diaHoje}:</TableCell>
-                <TableCell className="text-right">{totalRegistros}</TableCell>
+                <TableCell colSpan={8} className="text-right">Total de entradas em {diaHoje}:</TableCell>
+                <TableCell className="text-center">{totalRegistros}</TableCell>
               </TableRow>
             </TableFooter>
           </Table>
