@@ -1,7 +1,13 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
 import ReactModal from 'react-modal'
 import { Button } from "@/components/ui/button";
 import edit from '@/assets/edit.svg'
@@ -17,8 +23,9 @@ interface IUser {
 }
 
 export default function Users() {
-  
   const [users, setUsers] = useState<IUser[]>([])
+  const [usuario, setUsuario] = useState<IUser>()
+  const [isModalEditting, setIsModalEditting] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   async function loadUsers() {
@@ -30,6 +37,11 @@ export default function Users() {
 
   function handleAddUser() {
     setIsModalOpen(true)
+  }
+
+  function handleEditUser(u: IUser) {
+    setUsuario(u)
+    setIsModalEditting(true)
   }
 
   async function handleDeleteUser(id: number) {
@@ -54,7 +66,7 @@ export default function Users() {
         <TableHeader>
           <TableRow className="bg-slate-200">
             <TableHead className="flex-1">Nome</TableHead>
-            <TableHead className="w-96 text-center">E-mail</TableHead>
+            <TableHead className="w-96 text-left">E-mail</TableHead>
             <TableHead colSpan={2} className="text-center"></TableHead>
           </TableRow>
         </TableHeader>
@@ -62,9 +74,9 @@ export default function Users() {
           {users.map((item) => (
             <TableRow key={item.id}>
               <TableCell className="font-medium">{item.name}</TableCell>
-              <TableCell className="text-center">{item.email}</TableCell>
+              <TableCell className="text-left">{item.email}</TableCell>
               <TableCell className="w-20 text-center">
-                <button onClick={()=>{}} className="p-2 hover:cursor-pointer hover:bg-blue-100">
+                <button onClick={()=>{handleEditUser(item)}} className="p-2 hover:cursor-pointer hover:bg-blue-100">
                   <img src={edit} width={20} />
                 </button>
               </TableCell>
@@ -108,6 +120,40 @@ export default function Users() {
         <FrmUsuario 
           setIsModalOpen={setIsModalOpen} 
           listUsers={loadUsers} 
+        />
+      </ReactModal>
+
+      <ReactModal 
+        isOpen={isModalEditting}
+        onAfterClose={loadUsers}
+        style={{
+          overlay: {
+            position: "fixed",
+            backgroundColor: "rgba(255, 255, 255, 0.75)",
+            zIndex: 50,
+          },
+          content: {
+            position: window.innerWidth <= 768 ? "fixed" : "absolute",
+            top: window.innerWidth <= 768 ? "0" : "10%",
+            left: window.innerWidth <= 768 ? "0" : "30%",
+            right: window.innerWidth <= 768 ? "0" : "20%",
+            bottom: window.innerWidth <= 768 ? "0" : "20%",
+            border: "1px solid #ccc",
+            background: "#fff",
+            overflow: "auto",
+            width: window.innerWidth <= 768 ? "100%" : "500px",
+            height: "550px",
+            WebkitOverflowScrolling: "touch",
+            borderRadius: window.innerWidth <= 768 ? "0" : "4px",
+            outline: "none",
+            padding: "10px",
+          },
+        }}
+      >
+        <FrmUsuario 
+          setIsModalOpen={setIsModalEditting} 
+          listUsers={loadUsers} 
+          usuario={usuario}
         />
       </ReactModal>
       

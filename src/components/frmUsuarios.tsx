@@ -21,7 +21,7 @@ interface IUser {
   role: string
 }
 
-const userSchema = z.object({
+const userSchemaAdd = z.object({
   name: z
     .string()
     .min(4, "Favor informe pelo menos 4 caracteres"),
@@ -42,20 +42,42 @@ const userSchema = z.object({
   message: "As senhas não coincidem",
   path: ["rePassword"]
 })
-type TUser = z.infer<typeof userSchema>
+type TUserAdd = z.infer<typeof userSchemaAdd>
+
+const userSchemaUpd = z.object({
+  name: z
+    .string()
+    .min(4, "Favor informe pelo menos 4 caracteres"),
+  email: z
+    .string()
+    .email("E-mail inválido"),
+  role: z.string().nonempty("O tipo de usuário não pode ser vazio")
+})
+
+// type TUserUpd = z.infer<typeof userSchemaUpd>
 
 type Props = {  
   setIsModalOpen: (isOpen:boolean) => void 
   listUsers: () => void
+  usuario?: IUser
 }
 
-export default function FrmUsuario({setIsModalOpen, listUsers}: Props) {
-  const [formData, setFormData] = useState<TUser>({
-    name: "",
-    email: "",
-    password: "",
-    rePassword: "",
-    role: "",
+export default function FrmUsuario({setIsModalOpen, listUsers, usuario}: Props) {
+  // const schema = usuario ? userSchemaUpd : userSchemaAdd
+  const [formData, setFormData] = useState<TUserAdd>(
+    usuario ? {
+      name: usuario.name,
+      email: usuario.email,
+      password: usuario.password,
+      rePassword: usuario.password,
+      role: usuario.role,
+    } :
+    {
+      name: "",
+      email: "",
+      password: "",
+      rePassword: "",
+      role: "",
   })
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -70,7 +92,8 @@ export default function FrmUsuario({setIsModalOpen, listUsers}: Props) {
         'Content-Type': 'application/json',
       },
     }
-    const result = userSchema.safeParse({
+    
+    const result = userSchemaAdd.safeParse({
       ...formData,
       name: String(formData.name),
       email: String(formData.email),
@@ -78,6 +101,7 @@ export default function FrmUsuario({setIsModalOpen, listUsers}: Props) {
       rePassword: String(formData.rePassword),
       role: String(formData.role),
     });
+    
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
 
@@ -99,7 +123,7 @@ export default function FrmUsuario({setIsModalOpen, listUsers}: Props) {
   return (
     <div className="flex flex-col justify-between">
       <div className="flex flex-row justify-between items-center w-full pl-4 h-10 mb-6 bg-slate-200">
-        <h3 className="font-semibold">Cadastro de Usuários</h3>
+        <h3 className="font-semibold">{usuario? "Alteração do ":"Inclusão no "}Cadastro de Usuários</h3>
         <button
           className="px-3 py-1 text-white bg-red-400 hover:bg-red-500 hover:cursor-pointer font-bold text-lg"
           onClick={closeModal}
@@ -132,41 +156,43 @@ export default function FrmUsuario({setIsModalOpen, listUsers}: Props) {
             onChange={(e) => setFormData({ ...formData, email: e.target.value})}
           />
         </div>
+        {!usuario &&
+          <>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row justify-between items-center">
+                <label htmlFor="password" className="font-semibold">Senha:</label>
+                {errors.password && <span className="text-red-700 text-sm">{errors.password}</span>}
+              </div>
+              <Input 
+                id="password"
+                type="password"
+                className="w-full" 
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+            </div>
 
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-row justify-between items-center">
-            <label htmlFor="password" className="font-semibold">Senha:</label>
-            {errors.password && <span className="text-red-700 text-sm">{errors.password}</span>}
-          </div>
-          <Input 
-            id="password"
-            type="password"
-            className="w-full" 
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-row justify-between items-center">
-            <label htmlFor="rePassword" className="font-semibold">Confirme a Senha:</label>
-            {errors.rePassword && <span className="text-red-700 text-sm">{errors.rePassword}</span>}
-          </div>
-          <Input 
-            id="rePassword"
-            type="password"
-            className="w-full" 
-            value={formData.rePassword}
-            onChange={(e) => setFormData({ ...formData, rePassword: e.target.value })}
-          />
-        </div>
-
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row justify-between items-center">
+                <label htmlFor="rePassword" className="font-semibold">Confirme a Senha:</label>
+                {errors.rePassword && <span className="text-red-700 text-sm">{errors.rePassword}</span>}
+              </div>
+              <Input 
+                id="rePassword"
+                type="password"
+                className="w-full" 
+                value={formData.rePassword}
+                onChange={(e) => setFormData({ ...formData, rePassword: e.target.value })}
+              />
+            </div>
+          </>
+        }
         <div className="flex flex-col gap-2">
           <div className="flex flex-row justify-between items-center">
             <label htmlFor="role" className="font-semibold">Tipo de usuário:</label>
              {errors.role && <span className="text-red-700 text-sm">{errors.role}</span>}
           </div>
-          <Select onValueChange={(v) => setFormData({ ...formData, role:v })}>
+          <Select defaultValue={usuario?.role} onValueChange={(v) => setFormData({ ...formData, role:v })}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Selecione..." />
             </SelectTrigger>
