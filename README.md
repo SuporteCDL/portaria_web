@@ -1,4 +1,4 @@
-# Documentação do Backend
+# Documentação do Frontend com Vite + TypeScript
 
 > **Projeto:** Portaria  
 > **Versão:** 1.0.0  
@@ -29,7 +29,6 @@ O objetivo é servir como guia para desenvolvimento, manutenção e evolução d
 - Vite
 - Framework HTTP: Fastify
 - Banco de Dados: PostgreSQL
-- ORM / Client: TypeORM
 - Autenticação: JWT
 - Validação de dados: Zod
 
@@ -39,36 +38,41 @@ O objetivo é servir como guia para desenvolvimento, manutenção e evolução d
 
 O backend segue uma arquitetura em camadas, separando responsabilidades para facilitar manutenção e escalabilidade.
 
-### Camadas
+### Modulos
 
 - **Routes**: Definição das rotas HTTP
 - **Controllers**: Entrada das requisições e respostas
 - **Services**: Regras de negócio
-- **Repositories**: Acesso a dados
-- **Middlewares**: Autenticação, validações e interceptações
+- **Schemas**: Validações
 
 ---
 
 ## 📁 Estrutura de Pastas
 
 ```txt
-src/
- ├── assets/
- │         ├── *.png
- ├── modules/
- │    └── example/
- │         ├── example.controller.ts
- │         ├── example.service.ts
- │         ├── example.repository.ts
- │         └── example.routes.ts
- ├── shared/
- │    ├── middlewares/
- │    ├── errors/
- │    └── utils/
- ├── App.css
- ├── App.tsx
- ├── index.tsx
- └── main.tsx
+web/
+ ├── src/
+ │    ├── assets/
+ │    │         ├── *.png
+ │    │         ├── *.svg
+ │    ├── auth/
+ │    ├── components/
+ │    │    └── ui/
+ │    ├── contexts/
+ │    ├── lib/
+ │    ├── pages/
+ │    ├── routes/
+ │    ├── types/
+ │    ├── App.tsx
+ │    ├── index.css
+ │    └── main.tsx
+ ├── .env
+ ├── vite.config.ts
+ ├── tsconfig.tsbuildinfo
+ ├── .gitignore
+ ├── tsconfig.json
+ └── package.json
+ 
 ```
 
 ---
@@ -165,7 +169,7 @@ Authorization: Bearer token
 ## 📜 Regras de Negócio
 
 - Usuários devem possuir e-mail único
-- Apenas usuários autorizados acessam rotas protegidas
+- Apenas usuários logados acessam rotas protegidas
 - Exclusões podem ser lógicas (soft delete)
 
 ---
@@ -183,37 +187,13 @@ Authorization: Bearer token
 
 ### Códigos HTTP Utilizados
 
+- 200 → Autorizado
+- 201 → Bem sucedido
 - 400 → Requisição inválida
 - 401 → Não autorizado
 - 403 → Proibido
 - 404 → Não encontrado
 - 500 → Erro interno do servidor
-
----
-
-## 🧪 Testes
-
-- Testes unitários
-- Testes de integração
-
-(Ferramentas: Jest / Vitest)
-
----
-
-## 📊 Logs e Monitoramento
-
-- Logs de erro
-- Logs de requisição
-- Logs de autenticação
-
----
-
-## 🚀 Roadmap
-
-- [ ] Implementar testes automatizados
-- [ ] Implementar rate limit
-- [ ] Criar documentação Swagger
-- [ ] Implementar cache
 
 ---
 
