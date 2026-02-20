@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { api } from '@/lib/axios'
 import ReactModal from 'react-modal'
 import { Textarea } from '@/components/ui/textarea';
@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/table"
 import { calcularPermanencia, formatarTempo, formatDate, formatDateBR, formatDateDB } from '@/lib/functions'
 import { useAuth } from '@/contexts/AuthContext';
+import z from 'zod';
 
 interface IDepartment {
   id: number
@@ -53,11 +54,11 @@ export default function Entradas() {
   let totalRegistros = 0
   const { user } = useAuth()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isOut, setIsOut] = useState(false)
   const [departments, setDepartments] = useState<IDepartment[]>([])
   const [diaHoje, setDiaHoje] = useState(new Date().toLocaleDateString())
   const [entries, setEntries] = useState<IEntry[]>([])
   const [atendimento, setAtendimento] = useState('')
+  const [msgAtendimento, setMsgAtendimento] = useState('')
   const [nome, setNome] = useState('')
   const [servico, setServico] = useState('')
   const [qtdePessoas, setQtdePessoas] = useState(1)
@@ -112,12 +113,16 @@ export default function Entradas() {
     }
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    if (atendimento === '') {
+      setMsgAtendimento('Favor informar o setor.')
+      return
+    }
     const dataAtual = new Date().toISOString().split('T')[0]
     const horaAtual = new Date().toLocaleTimeString('pt-BR', {
       hour12: false
     })
-    event?.preventDefault()
     const dataForm = {
       atendimento: atendimento,
       qtde_pessoas: qtdePessoas,
@@ -187,28 +192,35 @@ export default function Entradas() {
 
         <div className="w-103 p-4 border-r border-slate-100 shadow-2xl">
           <h3 className='text-lg font-bold mb-4'>Incluir entrada:</h3>
-          <form className="flex flex-col gap-4 w-full">
-            <div className="flex flex-row justify-start items-center w-full">
-              <label className="w-28">Setor:</label>
-              <Select onValueChange={(v) => setAtendimento(v)}>
-                <SelectTrigger className="w-60">
-                  <SelectValue placeholder="Selecione..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {departments.map(item => (
-                      <SelectItem key={item.id} value={item.descricao}>{item.descricao}</SelectItem>
-                    ))}                    
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+          <form name='frmEntradas' id='frmEntradas' className="flex flex-col gap-4 w-full">
+            <div className="flex flex-col">
+              <div className='flex flex-row justify-start items-center w-full'>
+                <label className="w-28">Setor:</label>
+                <Select name='atendimento' onValueChange={(v) => {
+                  setMsgAtendimento('')
+                  setAtendimento(v)}
+                }>
+                  <SelectTrigger className="w-60">
+                    <SelectValue placeholder="Selecione..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {departments.map(item => (
+                        <SelectItem key={item.id} value={item.descricao}>{item.descricao}</SelectItem>
+                      ))}                    
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
 
-              <Button 
-                type='button' 
-                className='ml-2' 
-                onClick={handleOpenModal}
-              >+</Button>
-
+                <Button 
+                  type='button' 
+                  className='ml-2' 
+                  onClick={handleOpenModal}
+                >+</Button>
+              </div>
+              <span className='text-center text-sm text-red-500'>
+                {msgAtendimento}
+              </span>
             </div>
             <div className="flex flex-row justify-start items-center w-full">
               <label className="w-28">Nome:</label>
@@ -263,7 +275,11 @@ export default function Entradas() {
               />
             </div>
 
-            <Button onClick={handleSubmit} className="w-48 self-end hover:cursor-pointer bg-blue-400 hover:bg-blue-500">
+            <Button
+              type="submit"
+              onClick={handleSubmit} 
+              className="w-48 self-end hover:cursor-pointer bg-blue-400 hover:bg-blue-500"
+            >
               ENTRADA
             </Button>
           </form>
@@ -298,7 +314,8 @@ export default function Entradas() {
                 <TableHead className="w-28">Hora Saída</TableHead>
                 <TableHead className="w-28">Tempo</TableHead>
                 <TableHead className="w-16 text-center">Qtd.<br /> Pessoas</TableHead>
-                <TableHead className='w-20 text-center'>Marcar<br />Saída</TableHead>
+                <TableHead className='w-12 text-center'>Marcar<br />Saída</TableHead>
+                <TableHead className='w-8 text-center'></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -320,7 +337,7 @@ export default function Entradas() {
                       }
                     </TableCell>
                     <TableCell className="w-12 text-center">{item.qtde_pessoas}</TableCell>
-                    <TableCell className="w-12 text-center">
+                    <TableCell className="w-20 text-center flex flex-row justify-center items-center">
                       { Number(item.permanencia) < 1 ?
                         <Button
                           className='bg-green-300 hover:bg-green-400 hover:cursor-pointer'
@@ -342,7 +359,17 @@ export default function Entradas() {
                         </Button>
                       }
                     </TableCell>
-                  </TableRow>
+                    <TableCell>
+                      { user?.role === 'admin' && 
+                        <Button 
+                          className='bg-red-700 hover:bg-red-800' 
+                          onClick={() => deleteEntry(item)}
+                        >
+                          X
+                        </Button>
+                      }
+                      </TableCell>
+                    </TableRow>
                 )
               })}
             </TableBody>
