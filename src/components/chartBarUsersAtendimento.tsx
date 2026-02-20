@@ -35,7 +35,6 @@ export function ChartBarUsersAtendimento() {
         fill: `var(--color-${item.usuario.split(' ')[1] ? item.usuario.split(' ')[1] : item.usuario.split(' ')[0]})`,
       }))
       setEntriesByUser(parsedData)
-      console.log(parsedData)
     }
   }
   

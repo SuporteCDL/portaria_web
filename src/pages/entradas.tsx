@@ -53,6 +53,7 @@ export default function Entradas() {
   let totalRegistros = 0
   const { user } = useAuth()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isOut, setIsOut] = useState(false)
   const [departments, setDepartments] = useState<IDepartment[]>([])
   const [diaHoje, setDiaHoje] = useState(new Date().toLocaleDateString())
   const [entries, setEntries] = useState<IEntry[]>([])
@@ -320,15 +321,26 @@ export default function Entradas() {
                     </TableCell>
                     <TableCell className="w-12 text-center">{item.qtde_pessoas}</TableCell>
                     <TableCell className="w-12 text-center">
-                      <Button
-                        className='bg-orange-200 hover:bg-orange-300 hover:cursor-pointer'
-                        type='button'
-                        variant="outline"
-                        size="icon"
-                        onClick={() => updateEntry(item)}
-                      >
-                      <img src={svgLogOut} width={24} />
-                      </Button>
+                      { Number(item.permanencia) < 1 ?
+                        <Button
+                          className='bg-green-300 hover:bg-green-400 hover:cursor-pointer'
+                          type='button'
+                          variant="outline"
+                          size="icon"
+                          onClick={() => updateEntry(item)}
+                        >
+                        <img src={svgLogOut} width={24} />
+                        </Button>
+                          :
+                        <Button
+                          className='bg-slate-200'
+                          type='button'
+                          variant="outline"
+                          size="icon"
+                        > 
+                          <img src={svgLogOut} width={24} />
+                        </Button>
+                      }
                     </TableCell>
                   </TableRow>
                 )

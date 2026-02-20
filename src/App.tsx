@@ -8,6 +8,7 @@ import { PrivateRoute } from "./routes/PrivateRoute";
 import { ProtectedLayout } from "./routes/ProtectedLayout";
 import RelAtendimentos from "./pages/relatendimentos";
 import Users from "./pages/users";
+import Profile from "./pages/profile";
 
 Modal.setAppElement('#root');
 
@@ -20,6 +21,7 @@ function App() {
         <Route element={<PrivateRoute><ProtectedLayout /></PrivateRoute>}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/entradas" element={<Entradas />} />
           <Route path="/relatendimentos" element={<RelAtendimentos />} />
         </Route>

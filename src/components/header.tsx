@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Link } from 'react-router-dom'
+import logoUser from "@/assets/user.svg"
 
 export default function Header() {
   const { logout, user } = useAuth()
@@ -30,6 +31,9 @@ export default function Header() {
         </div>
         <div className='flex flex-row gap-4 pr-4'>
           <DropdownMenu>
+            <Link to='/profile'>
+              <img src={logoUser} alt="Perfil do Usuário" className="w-8" />
+            </Link>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost">
                 <img src={menu} className='w-8' alt='Menu' />

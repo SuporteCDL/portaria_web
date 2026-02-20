@@ -92,7 +92,6 @@ export default function FrmUsuario({setIsModalOpen, listUsers, usuario}: Props) 
         'Content-Type': 'application/json',
       },
     }
-    
     const result = userSchemaAdd.safeParse({
       ...formData,
       name: String(formData.name),
@@ -116,8 +115,13 @@ export default function FrmUsuario({setIsModalOpen, listUsers, usuario}: Props) 
 
     setErrors({});
     const { rePassword, ...userToSave } = result.data;
-    await api.post('users', userToSave, config)
-    alert('Usuário incluído com sucesso.')
+    if (usuario) {
+      await api.put('users', { ...userToSave, id: usuario.id }, config)
+      alert('Usuário alterado com sucesso.')
+    } else {
+      await api.post('users', userToSave)
+      alert('Usuário incluído com sucesso.')
+    }
   }
 
   return (
